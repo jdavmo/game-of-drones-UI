@@ -1,15 +1,58 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { GameOfDronesService } from '../../services';
+import { PlayerDescriptor, GameDescriptor } from '../../models';
 
 @Component({
-  selector: 'app-register',
-  templateUrl: './register.component.html',
-  styleUrls: ['./register.component.scss']
+    selector: 'app-register',
+    templateUrl: './register.component.html',
+    styleUrls: ['./register.component.scss']
 })
 export class RegisterComponent implements OnInit {
 
-  constructor() { }
+    form: FormGroup;
+    playerOne: PlayerDescriptor;
+    playerTwo: PlayerDescriptor;
 
-  ngOnInit() {
-  }
+    constructor(private router: Router, private _gameOfDrones: GameOfDronesService) {}
+
+    ngOnInit() {
+
+        this.form = new FormGroup({
+            playerOne: new FormControl(null, Validators.required),
+            playerTwo: new FormControl(null, Validators.required)
+        });
+
+        this.createPlayers();
+    }
+
+    createPlayers() {
+        this.playerOne = new PlayerDescriptor(1);
+        this.playerTwo = new PlayerDescriptor(2);
+    }
+
+    setNamesPlayers() {
+        this.playerOne.setName(this.form.controls['playerOne'].value);
+        this.playerTwo.setName(this.form.controls['playerTwo'].value);
+    }
+
+    onSubmit(isValid: boolean) {
+        if (isValid && this.validateDifferentNamePlayer()) {
+            this.setNamesPlayers();
+            this._gameOfDrones.start(this.playerOne, this.playerTwo);
+            this.router.navigate(['/game-of-drones/round']);
+            /*.subscribe((game: GameDescriptor) => {
+                this.router.navigate(['/game-of-drones/round']);
+            });*/
+        } else {
+            // TODO: Show a message with this validation
+            console.log('is not valid, the names are iqual');
+        }
+    }
+
+    validateDifferentNamePlayer(): boolean {
+        return this.form.controls['playerOne'].value !== this.form.controls['playerTwo'].value;
+    }
 
 }
