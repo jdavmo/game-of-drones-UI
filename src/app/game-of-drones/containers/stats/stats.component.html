@@ -1,3 +1,9 @@
-<p>
-  stats works!
-</p>
+<button (click)="rematch()">
+    rematch
+</button>
+
+<button (click)="finishGame()">
+    Finish Game
+</button>
+
+{{this.stats | json}}

@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { GameOfDronesService } from '../../services';
-import { PlayerDescriptor, GameDescriptor } from '../../models';
+import { Router } from '@angular/router';
+import { PlayerDescriptor, GameDescriptor, RoundDescriptor } from '../../models';
 
 @Component({
     selector: 'app-round',
@@ -9,23 +10,48 @@ import { PlayerDescriptor, GameDescriptor } from '../../models';
 })
 export class RoundComponent implements OnInit {
 
-    constructor(private _gameOfDrones: GameOfDronesService) { }
+    round: RoundDescriptor = new RoundDescriptor();
+    score: Object;
+    private rootUrl: string = '/game-of-drones';
+
+    constructor(private router: Router, private _gameOfDrones: GameOfDronesService) { }
 
     ngOnInit() {
-        console.log(this._gameOfDrones.checkGameActive());
-        if (this._gameOfDrones.checkGameActive()) {
+        if (this._gameOfDrones.isGameActive()) {
             this.continuosGame();
         } else {
-            // TODO: return to the register view
+            this.router.navigate([this.rootUrl + '/register']);
         }
     }
 
     continuosGame() {
-        console.log(this._gameOfDrones.checkMatchActive());
-        if (this._gameOfDrones.checkMatchActive()) {
-            let move = this._gameOfDrones.whoMoves();
+        // Validate winner
+        this.score = this._gameOfDrones.getScore();
+        this.validateWinner();
+
+        if (this._gameOfDrones.isMatchActive()) {
+            this.round.import(this._gameOfDrones.whoMoves());
         } else {
             // TODO: should start a match
+        }
+    }
+
+    move() {
+        if (this.round.hasOwnProperty('move')) {
+            // Kill the reference
+            let round = JSON.parse(JSON.stringify(this.round));
+            // Register the round
+            this._gameOfDrones.registerRound(round);
+            this.score = this._gameOfDrones.getScore();
+            this.validateWinner();
+            // Next round
+            this.continuosGame();
+        }
+    }
+
+    validateWinner() {
+        if (this._gameOfDrones.existWinner()) {
+            this.router.navigate([this.rootUrl + '/winner']);
         }
     }
 

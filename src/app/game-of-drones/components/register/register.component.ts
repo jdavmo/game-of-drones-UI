@@ -14,6 +14,7 @@ export class RegisterComponent implements OnInit {
     form: FormGroup;
     playerOne: PlayerDescriptor;
     playerTwo: PlayerDescriptor;
+    private rootUrl: string = '/game-of-drones';
 
     constructor(private router: Router, private _gameOfDrones: GameOfDronesService) {}
 
@@ -41,13 +42,13 @@ export class RegisterComponent implements OnInit {
         if (isValid && this.validateDifferentNamePlayer()) {
             this.setNamesPlayers();
             this._gameOfDrones.start(this.playerOne, this.playerTwo);
-            this.router.navigate(['/game-of-drones/round']);
+            this.router.navigate([this.rootUrl + '/round']);
             /*.subscribe((game: GameDescriptor) => {
-                this.router.navigate(['/game-of-drones/round']);
+                this.router.navigate([this.rootUrl + '/round']);
             });*/
         } else {
             // TODO: Show a message with this validation
-            console.log('is not valid, the names are iqual');
+            console.log('it is not valid, the names are iqual');
         }
     }
 

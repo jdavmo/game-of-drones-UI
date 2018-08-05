@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { PlayerDescriptor, GameDescriptor, MatchDescriptor } from '../models';
+import { PlayerDescriptor, GameDescriptor, MatchDescriptor, RoundDescriptor } from '../models';
 import { ConfigService } from '@shared/services';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from "rxjs/operators";
@@ -23,27 +23,64 @@ export class GameOfDronesService {
         this.gameActive.matchs.push(new MatchDescriptor());
     }
 
-    registerRound(player: PlayerDescriptor, ) {
-
+    startNewMatch() {
+        this.gameActive.matchs.push(new MatchDescriptor());
     }
 
-    checkGameActive(): boolean {
-        return this.gameActive.active;
+    finishGame() {
+        this.gameActive.active = false;
     }
 
-    checkMatchActive(): boolean {
+    finishMatch() {
+        this.gameActive.matchs[this.gameActive.getMatchActiveIndex()].active = false;
+    }
+
+    registerRound(round: RoundDescriptor) {
+        delete round.playerName;
+        this.gameActive.matchs[this.gameActive.getMatchActiveIndex()].registerRound(round);
+    }
+
+    existWinner(): boolean {
+        let score = this.getScore();
+        if (score.hasOwnProperty('1') && score.hasOwnProperty('2')) {
+            return score['1'] === 3 || score['2'] === 3;
+        }
+        return false;
+    }
+
+    getStats() {
+        let stats: object = {};
+        stats['matchs'] = this.gameActive.getStatsMatchs();
+        stats['players'] = this.gameActive.players;
+        stats['gamesWon'] = this.gameActive.getCountMatchsWonByPlayer();
+        return stats;
+    }
+
+    isGameActive(): boolean {        
+        if (this.gameActive) {
+            return this.gameActive.active;
+        }
+        return false;
+    }
+
+    getScore() {
+        return this.gameActive.matchs[this.gameActive.getMatchActiveIndex()].getScore();
+    }
+
+    isMatchActive(): boolean {
         return this.gameActive.matchs.filter((match: MatchDescriptor) => match.isActive()).length > 0;
     }
     
-    whoMoves() {
+    whoMoves(): Object {
         let activeMatch = this.gameActive.matchs.filter((match: MatchDescriptor) => match.isActive());
+        let nextGame: Object = {};
         if (activeMatch.length > 0) {
-            let nextPlayerNumber = activeMatch[0].nextPlayer();
-            let player = this.gameActive.getPlayer(nextPlayerNumber);
-            // let round = this.gameActive.getRound();
-            
+            let player = this.gameActive.getPlayer(activeMatch[0].nextPlayer());
+            nextGame['player'] = player[0].player;
+            nextGame['playerName'] = player[0].name;
+            nextGame['round'] = activeMatch[0].getRound();
         }
-        
+        return nextGame;
     }
     /*start(playerOne: PlayerDescriptor, playerTwo: PlayerDescriptor): Observable<GameDescriptor> {
         return new Observable(observable => {
@@ -62,10 +99,5 @@ export class GameOfDronesService {
                 });
         });
     }*/
-
-
-    post() {
-
-    }
 
 }
