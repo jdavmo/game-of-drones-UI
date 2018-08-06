@@ -1,0 +1,11 @@
+{{round | json}}
+{{score | json}}
+<br>
+<select [(ngModel)]="round.move">
+    <option value="rock">Rock</option>
+    <option value="paper">Paper</option>
+    <option value="scissors">Scissors</option>
+</select>
+<button (click)="move()">
+    Ok
+</button>

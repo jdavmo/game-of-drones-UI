@@ -1,0 +1,9 @@
+<form (ngSubmit)="onSubmit(form.valid)">
+    <div [formGroup]="form">
+        <input formControlName="playerOne" placeholder="Player one">
+    </div>
+    <div [formGroup]="form">
+        <input formControlName="playerTwo" placeholder="Player two">
+    </div>
+    <button>Start</button>
+</form>
