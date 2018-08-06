@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 
 @Component({
     selector: 'app-intro',
@@ -7,8 +8,14 @@ import { Component, OnInit } from '@angular/core';
 })
 export class IntroComponent implements OnInit {
 
-    constructor() { }
+    private rootUrl: string = '/game-of-drones';
+    
+    constructor(private router: Router) { }
 
     ngOnInit() {}
+
+    play() {
+        this.router.navigate([this.rootUrl + '/register']);
+    }
 
 }
