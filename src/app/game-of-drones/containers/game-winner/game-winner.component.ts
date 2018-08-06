@@ -20,7 +20,7 @@ export class GameWinnerComponent implements OnInit {
             this.finishMatch();
         } else {
             this.router.navigate([this.rootUrl + '/register']);
-        }   
+        }
     }
 
     getWinner() {
@@ -28,8 +28,11 @@ export class GameWinnerComponent implements OnInit {
     }
 
     rematch() {
-        this._gameOfDrones.startNewMatch();
-        this.router.navigate([this.rootUrl + '/round']);
+        this._gameOfDrones.startNewMatch().subscribe(() => {
+            this.router.navigate([this.rootUrl + '/round']);
+        }, err => {
+            // TODO: handle error
+        });
     }
 
     validateWinner() {
@@ -49,8 +52,11 @@ export class GameWinnerComponent implements OnInit {
     }
 
     finishGame() {
-        this._gameOfDrones.finishGame();
-        this.router.navigate([this.rootUrl + '/register']);
+        this._gameOfDrones.finishGame().subscribe(() => {
+            this.router.navigate([this.rootUrl + '/register']);
+        }, err => {
+            // TODO: handle error
+        });
     }
 
 }

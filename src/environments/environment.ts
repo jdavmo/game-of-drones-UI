@@ -1,10 +1,10 @@
 export const environment = {
     production: false,
     config: {
-        api: "http://localhost:3000",
+        api: 'http://localhost:3000',
         resource: {
-            service: "gameofdrones",
-            version: "v1"
+            service: 'games',
+            version: 'v1' // TODO: use version endpoint
         }
     }
 };

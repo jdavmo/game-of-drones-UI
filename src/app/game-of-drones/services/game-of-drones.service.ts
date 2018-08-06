@@ -3,41 +3,72 @@ import { HttpClient } from '@angular/common/http';
 import { PlayerDescriptor, GameDescriptor, MatchDescriptor, RoundDescriptor } from '../models';
 import { ConfigService } from '@shared/services';
 import { Observable, throwError } from 'rxjs';
-import { catchError } from "rxjs/operators";
-import { GAME_MOCK } from '../../mocks/game.mock';
+import { catchError } from 'rxjs/operators';
 
 @Injectable({
     providedIn: 'root'
 })
 export class GameOfDronesService {
 
-    static resource: string = "category.json";
     private gameActive: GameDescriptor;
+    private url: string = this._config.getApi() + '/' + this._config.getApiResourceService();
 
     constructor(private _http: HttpClient, private _config: ConfigService) { }
 
-    start(playerOne: PlayerDescriptor, playerTwo: PlayerDescriptor) {
+    start(playerOne: PlayerDescriptor, playerTwo: PlayerDescriptor): Observable<GameDescriptor> {
         this.gameActive = new GameDescriptor();
         this.gameActive.registerPlayer(playerOne);
         this.gameActive.registerPlayer(playerTwo);
         this.gameActive.matchs.push(new MatchDescriptor());
+        return this.create();
     }
 
-    startNewMatch() {
+    startNewMatch(): Observable<any> {
         this.gameActive.matchs.push(new MatchDescriptor());
+        return this.update();
     }
 
-    finishGame() {
+    finishGame(): Observable<any> {
         this.gameActive.active = false;
+        return this.update();
     }
 
-    finishMatch() {
+    finishMatch(): Observable<any> {
         this.gameActive.matchs[this.gameActive.getMatchActiveIndex()].active = false;
+        return this.update();
     }
 
-    registerRound(round: RoundDescriptor) {
+    registerRound(round: RoundDescriptor): Observable<any> {
         delete round.playerName;
         this.gameActive.matchs[this.gameActive.getMatchActiveIndex()].registerRound(round);
+        return this.update();
+    }
+
+    create(): Observable<GameDescriptor> {
+        return new Observable(observable => {
+            this._http.post(this.url, this.gameActive)
+                .pipe(
+                    catchError(e => throwError(e))
+                )
+                .subscribe(response => {
+                    this.gameActive.import(response);
+                    observable.next(this.gameActive);
+                    observable.complete();
+                });
+        });
+    }
+
+    update(): Observable<any> {
+        return new Observable(observable => {
+            this._http.put(this.url + '/' + this.gameActive._id, this.gameActive)
+                .pipe(
+                    catchError(e => throwError(e))
+                )
+                .subscribe(response => {
+                    observable.next(response);
+                    observable.complete();
+                });
+        });
     }
 
     existWinner(): boolean {
@@ -56,7 +87,7 @@ export class GameOfDronesService {
         return stats;
     }
 
-    isGameActive(): boolean {        
+    isGameActive(): boolean {
         if (this.gameActive) {
             return this.gameActive.active;
         }
@@ -70,7 +101,7 @@ export class GameOfDronesService {
     isMatchActive(): boolean {
         return this.gameActive.matchs.filter((match: MatchDescriptor) => match.isActive()).length > 0;
     }
-    
+
     whoMoves(): Object {
         let activeMatch = this.gameActive.matchs.filter((match: MatchDescriptor) => match.isActive());
         let nextGame: Object = {};
@@ -82,22 +113,5 @@ export class GameOfDronesService {
         }
         return nextGame;
     }
-    /*start(playerOne: PlayerDescriptor, playerTwo: PlayerDescriptor): Observable<GameDescriptor> {
-        return new Observable(observable => {
-            this.gameActive = new GameDescriptor();
-            this.gameActive.import(GAME_MOCK);
-            console.log(this.gameActive);
-            observable.next(this.gameActive);
-            observable.complete();
-            this._http.get('./mocks/game.json')
-                .pipe(
-                    catchError(e => throwError(e))
-                )
-                .subscribe(response => {
-                    observable.next(GameDescriptor.import(response));
-                    observable.complete();
-                });
-        });
-    }*/
 
 }

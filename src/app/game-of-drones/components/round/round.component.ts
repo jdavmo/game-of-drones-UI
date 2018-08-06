@@ -32,6 +32,7 @@ export class RoundComponent implements OnInit {
         if (this._gameOfDrones.isMatchActive()) {
             this.round.import(this._gameOfDrones.whoMoves());
         } else {
+            // if you reach here
             // TODO: should start a match
         }
     }
@@ -41,11 +42,15 @@ export class RoundComponent implements OnInit {
             // Kill the reference
             let round = JSON.parse(JSON.stringify(this.round));
             // Register the round
-            this._gameOfDrones.registerRound(round);
-            this.score = this._gameOfDrones.getScore();
-            this.validateWinner();
-            // Next round
-            this.continuosGame();
+            // TODO: Loadding...
+            this._gameOfDrones.registerRound(round).subscribe(() => {
+                this.score = this._gameOfDrones.getScore();
+                this.validateWinner();
+                // Next round
+                this.continuosGame();
+            }, err => {
+                // TODO: handle error
+            });
         }
     }
 

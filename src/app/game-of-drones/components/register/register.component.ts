@@ -41,11 +41,11 @@ export class RegisterComponent implements OnInit {
     onSubmit(isValid: boolean) {
         if (isValid && this.validateDifferentNamePlayer()) {
             this.setNamesPlayers();
-            this._gameOfDrones.start(this.playerOne, this.playerTwo);
-            this.router.navigate([this.rootUrl + '/round']);
-            /*.subscribe((game: GameDescriptor) => {
+            // TODO: loading...
+            this._gameOfDrones.start(this.playerOne, this.playerTwo)
+            .subscribe(() => {
                 this.router.navigate([this.rootUrl + '/round']);
-            });*/
+            });
         } else {
             // TODO: Show a message with this validation
             console.log('it is not valid, the names are iqual');

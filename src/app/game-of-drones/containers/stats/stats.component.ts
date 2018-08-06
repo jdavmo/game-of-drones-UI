@@ -27,13 +27,15 @@ export class StatsComponent implements OnInit {
     }
 
     rematch() {
-        this._gameOfDrones.startNewMatch();
-        this.router.navigate([this.rootUrl + '/round']);
+        this._gameOfDrones.startNewMatch().subscribe(() => {
+            this.router.navigate([this.rootUrl + '/round']);
+        });
     }
 
     finishGame() {
-        this._gameOfDrones.finishGame();
-        this.router.navigate([this.rootUrl + '/register']);
+        this._gameOfDrones.finishGame().subscribe(() => {
+            this.router.navigate([this.rootUrl + '/register']);
+        });
     }
 
 }

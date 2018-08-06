@@ -1,11 +1,10 @@
 export const environment = {
     production: true,
     config: {
-        api: "http://localhost:3000",
+        api: 'http://localhost:3000',
         resource: {
-            point: "api",
-            version: "v1",
-            app: "gameofdrones"
+            service: 'games',
+            version: 'v1'
         }
     }
 };

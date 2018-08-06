@@ -24,7 +24,7 @@ export class MatchDescriptor {
         let rounds: { [property: string]: any } = {};
         this.rounds.forEach(round => {
             if (!rounds.hasOwnProperty(round.round)) {
-                rounds[round.round] = {}
+                rounds[round.round] = {};
             }
             rounds[round.round][round.player] = round;
         });
@@ -70,7 +70,7 @@ export class MatchDescriptor {
         let movePlayerTwo: string;
 
         Object.keys(rounds).forEach(roundNumber => {
-            
+
             if (rounds[roundNumber].hasOwnProperty('1')) {
                 movePlayerOne = rounds[roundNumber]['1'].move;
             }
@@ -83,8 +83,8 @@ export class MatchDescriptor {
                     players[winner]++;
                 }
             }
-            movePlayerOne = "";
-            movePlayerTwo = "";
+            movePlayerOne = '';
+            movePlayerTwo = '';
         });
 
         return players;
@@ -94,28 +94,28 @@ export class MatchDescriptor {
         if (playerOne ===  playerTwo) {
             return 0;
         }
-        if (playerOne === "scissors") {
-            if (playerTwo === "rock") {
+        if (playerOne === 'scissors') {
+            if (playerTwo === 'rock') {
                 return 2;
             } else {
                 return 1;
             }
         }
-        if (playerOne === "paper") {
-            if (playerTwo === "rock") {
+        if (playerOne === 'paper') {
+            if (playerTwo === 'rock') {
                 return 1;
             } else {
                 return 2;
             }
         }
-        if (playerOne === "rock") {
-            if (playerTwo === "scissors") {
+        if (playerOne === 'rock') {
+            if (playerTwo === 'scissors') {
                 return 1;
             } else {
                 return 2;
             }
         }
-    };
+    }
 
     public import(rawData: any) {
 
